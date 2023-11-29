@@ -4,6 +4,7 @@ using DrWatson
 # load point cloud from data directory
 # the square domain has its boundaries labeled as "left", "right", "top", and "bottom"
 pc = load_csv(datadir("pointclouds", "Square_h=0.025_type=meshfree.csv"))
+labelpoints!(pc, Val(:square))
 
 # define heat equation of the form c * dT/dt = div(lambda * grad(T)) + q
 # each function depends on the point p (see Particle) and time t
@@ -32,7 +33,7 @@ diffusion_method = DiffusionSystem(
         # weighted least squares optimization for each point with a
         # one-dimensional diagonal dominance correction
         # to turn off correction replace OneDimensionalCorrection_Default with DD_Off()
-        DivEtaGrad_WLSQ(2, false, OneDimensionalCorrection_Default())
+        DivEtaGrad_WLSQ(2, false, DD_Off())
     )
 )
 

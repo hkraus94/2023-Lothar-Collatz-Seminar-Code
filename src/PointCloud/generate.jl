@@ -273,15 +273,27 @@ function generate_pointcloud(pci::PointCloudInfo, sname = "")
     return pc
 end
 
-function labelpoints!(pc::PointCloud, ::Val{:square})
+function labelpoints!(pc::PointCloud{2}, ::Val{:square})
+    xmin = Inf
+    xmax = -Inf
+    ymin = Inf
+    ymax = -Inf
+
     for i = eachindex(pc)
-        if pc.p.x[i][1] == -1
+        xmin = pc.p.x[i][1] < xmin ? pc.p.x[i][1] : xmin
+        xmax = pc.p.x[i][1] > xmax ? pc.p.x[i][1] : xmax
+        ymin = pc.p.x[i][2] < ymin ? pc.p.x[i][2] : ymin
+        ymax = pc.p.x[i][2] > ymax ? pc.p.x[i][2] : ymax
+    end
+
+    for i = eachindex(pc)
+        if pc.p.x[i][1] == xmin
             pc.p.label[i], pc.p.ident[i] = :left, :wall
-        elseif pc.p.x[i][1] == 1
+        elseif pc.p.x[i][1] == xmax
             pc.p.label[i], pc.p.ident[i] = :right, :wall
-        elseif pc.p.x[i][2] == -1
+        elseif pc.p.x[i][2] == ymin
             pc.p.label[i], pc.p.ident[i] = :bottom, :wall
-        elseif pc.p.x[i][2] == 1
+        elseif pc.p.x[i][2] == ymax
             pc.p.label[i], pc.p.ident[i] = :top, :wall
         end
     end
